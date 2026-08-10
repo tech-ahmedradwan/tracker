@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>20-Day Backend Study Tracker</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 32px 20px;
+    line-height: 1.5;
+    background: Canvas;
+    color: CanvasText;
+  }
+  h1 { margin-bottom: 6px; }
+  .meta { opacity: .75; margin-bottom: 24px; }
+  .week {
+    margin: 28px 0;
+    padding: 18px 20px;
+    border: 1px solid color-mix(in srgb, CanvasText 18%, transparent);
+    border-radius: 12px;
+  }
+  .day {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 8px;
+    border-radius: 8px;
+  }
+  .day:hover { background: color-mix(in srgb, CanvasText 7%, transparent); }
+  input[type="checkbox"] {
+    width: 19px;
+    height: 19px;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  .completed {
+    text-decoration: line-through;
+    opacity: .55;
+  }
+  .summary {
+    margin-top: 28px;
+    padding: 18px 20px;
+    border-radius: 12px;
+    background: color-mix(in srgb, CanvasText 7%, transparent);
+  }
+  .progress-wrap {
+    height: 12px;
+    background: color-mix(in srgb, CanvasText 15%, transparent);
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 10px 0;
+  }
+  .progress {
+    height: 100%;
+    width: 0%;
+    background: CanvasText;
+    transition: width .2s ease;
+  }
+  button {
+    margin-top: 14px;
+    padding: 9px 14px;
+    border: 1px solid color-mix(in srgb, CanvasText 25%, transparent);
+    border-radius: 8px;
+    background: Canvas;
+    color: CanvasText;
+    cursor: pointer;
+  }
+  button:hover { opacity: .8; }
+</style>
+</head>
+<body>
+
+<h1>🚀 20-Day Backend Study Tracker</h1>
+<div class="meta">
+  Start: 10 Aug 2026 · Deadline: 29 Aug 2026 · Daily Target: 3H · Total: 60H
+</div>
+
+<div id="tracker"></div>
+
+<div class="summary">
+  <strong>Progress</strong>
+  <div id="progressText">0 / 20 days completed</div>
+  <div class="progress-wrap"><div class="progress" id="progressBar"></div></div>
+  <button onclick="resetTracker()">Reset Progress</button>
+</div>
+
+<script>
+const days = [
+  ["Week 1", [
+    ["Day 1 — Aug 10", [["Java Core", "1.5H"], ["Spring", "1.5H"]]],
+    ["Day 2 — Aug 11", [["Java Core", "1.5H"], ["Spring", "1.5H"]]],
+    ["Day 3 — Aug 12", [["Java Core", "1.5H"], ["Spring", "1.5H"]]],
+    ["Day 4 — Aug 13", [["Java Core", "1.5H"], ["Spring", "1.5H"]]],
+    ["Day 5 — Aug 14", [["Java Core", "1.5H"], ["Spring", "1.5H"]]]
+  ]],
+  ["Week 2", [
+    ["Day 6 — Aug 15", [["Advanced Java", "2H"], ["Git & DSA", "1H"]]],
+    ["Day 7 — Aug 16", [["Advanced Java", "2H"], ["Git & DSA", "1H"]]],
+    ["Day 8 — Aug 17", [["Git & DSA", "2H"], ["Spring", "1H"]]],
+    ["Day 9 — Aug 18", [["Git & DSA", "2H"], ["Spring", "1H"]]],
+    ["Day 10 — Aug 19", [["Spring", "3H"]]]
+  ]],
+  ["Week 3", [
+    ["Day 11 — Aug 20", [["Spring", "3H"]]],
+    ["Day 12 — Aug 21", [["Spring", "3H"]]],
+    ["Day 13 — Aug 22", [["Spring", "3H"]]],
+    ["Day 14 — Aug 23", [["Spring", "3H"]]],
+    ["Day 15 — Aug 24", [["Spring", "3H"]]]
+  ]],
+  ["Week 4", [
+    ["Day 16 — Aug 25", [["Spring", "3H"]]],
+    ["Day 17 — Aug 26", [["Spring", "3H"]]],
+    ["Day 18 — Aug 27", [["Spring Security", "3H"]]],
+    ["Day 19 — Aug 28", [["Spring Security", "2H"], ["Review / Catch-up", "1H"]]],
+    ["Day 20 — Aug 29", [["Review", "1H"], ["Practice", "1H"], ["Catch-up / Final Review", "1H"]]]
+  ]]
+];
+
+const container = document.getElementById("tracker");
+let id = 0;
+
+days.forEach(([week, weekDays]) => {
+  const section = document.createElement("section");
+  section.className = "week";
+  section.innerHTML = `<h2>${week}</h2>`;
+
+  weekDays.forEach(([dayName, tasks]) => {
+    tasks.forEach(([subject, hours]) => {
+      const key = `backend-tracker-${id++}`;
+      const row = document.createElement("label");
+      row.className = "day";
+      row.innerHTML = `
+        <input type="checkbox" data-key="${key}">
+        <span><strong>${dayName}</strong> — ${subject} — ${hours}</span>
+      `;
+      section.appendChild(row);
+    });
+  });
+
+  container.appendChild(section);
+});
+
+function update() {
+  const boxes = [...document.querySelectorAll('input[type="checkbox"]')];
+  const checked = boxes.filter(b => b.checked).length;
+  const total = boxes.length;
+  const percent = total ? Math.round((checked / total) * 100) : 0;
+
+  boxes.forEach(box => {
+    const span = box.nextElementSibling;
+    span.classList.toggle("completed", box.checked);
+    localStorage.setItem(box.dataset.key, box.checked);
+  });
+
+  document.getElementById("progressText").textContent =
+    `${checked} / ${total} study items completed (${percent}%)`;
+  document.getElementById("progressBar").style.width = percent + "%";
+}
+
+function load() {
+  document.querySelectorAll('input[type="checkbox"]').forEach(box => {
+    box.checked = localStorage.getItem(box.dataset.key) === "true";
+  });
+  update();
+}
+
+function resetTracker() {
+  if (!confirm("Reset all progress?")) return;
+  document.querySelectorAll('input[type="checkbox"]').forEach(box => {
+    localStorage.removeItem(box.dataset.key);
+    box.checked = false;
+  });
+  update();
+}
+
+document.querySelectorAll('input[type="checkbox"]').forEach(box => {
+  box.addEventListener("change", update);
+});
+
+load();
+</script>
+
+</body>
+</html>
