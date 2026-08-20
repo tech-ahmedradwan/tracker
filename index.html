@@ -3,429 +3,658 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>20-Day Backend Study Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Backend Mastery Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { 
-    --bg: #f3f4f6;
+  :root {
+    --bg: #f5f4ef;
     --card-bg: #ffffff;
-    --text-main: #111827;
-    --text-muted: #6b7280;
-    --primary: #4f46e5;
-    --primary-light: #e0e7ff;
-    --success: #10b981;
-    --success-light: #d1fae5;
-    --danger: #ef4444;
-    --danger-light: #fee2e2;
-    --pending: #9ca3af;
-    --pending-light: #f3f4f6;
-    --border: #e5e7eb;
-    
-    color-scheme: light dark; 
+    --text-main: #1c1b1a;
+    --text-muted: #706c63;
+    --primary: #2f5233;
+    --primary-light: #dbe6d5;
+    --accent: #c1502e;
+    --accent-light: #f5ded4;
+    --success: #2f5233;
+    --success-light: #dbe6d5;
+    --danger: #b3432b;
+    --danger-light: #f5ded4;
+    --pending: #9c9689;
+    --pending-light: #eceae3;
+    --border: #e2ded3;
+    color-scheme: light dark;
   }
-
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #111827;
-      --card-bg: #1f2937;
-      --text-main: #f9fafb;
-      --text-muted: #9ca3af;
-      --border: #374151;
-      --primary-light: #3730a3;
-      --success-light: #065f46;
-      --danger-light: #7f1d1d;
-      --pending-light: #374151;
+      --bg: #16171a;
+      --card-bg: #1f2124;
+      --text-main: #f2f0ea;
+      --text-muted: #a29d92;
+      --border: #33322f;
+      --primary-light: #2a3a2c;
+      --success-light: #2a3a2c;
+      --danger-light: #402521;
+      --accent-light: #402521;
+      --pending-light: #2a2926;
     }
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
     color: var(--text-main);
-    padding: 2rem 1rem;
+    padding: 2rem 1rem 4rem;
     line-height: 1.5;
   }
-
-  .container {
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-
-  /* Header & Summary */
-  .header {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
+  .container { max-width: 1000px; margin: 0 auto; }
+  .header { text-align: center; margin-bottom: 1.5rem; }
   .header h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 0.5rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2rem; font-weight: 700; letter-spacing: -0.02em;
   }
-  .header .meta {
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    font-weight: 500;
-  }
+  .header .meta { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.35rem; }
 
-  /* Progress Section */
-  .progress-card {
-    background: var(--card-bg);
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    margin-bottom: 2rem;
-    border: 1px solid var(--border);
-  }
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    font-weight: 600;
-  }
-  .progress-wrap {
-    height: 12px;
-    background: var(--border);
-    border-radius: 999px;
-    overflow: hidden;
-  }
-  .progress-bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, var(--primary), #818cf8);
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .totals {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    justify-content: space-between;
-  }
-  .totals div strong { color: var(--text-main); }
-
-  /* Section Titles */
-  .section-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  /* Today's Card */
-  .today-section {
-    margin-bottom: 3rem;
-  }
-  .today-card {
-    background: linear-gradient(to right bottom, var(--primary-light), var(--card-bg));
-    border: 2px solid var(--primary);
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Grid for All Days */
-  .days-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
-  }
-  
-  /* Day Card */
-  .day-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 1.25rem;
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .day-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-  }
-  .day-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
+  .tabs {
+    display: flex; gap: 0.5rem; margin-bottom: 1.5rem;
     border-bottom: 1px solid var(--border);
   }
-  .day-title {
-    font-weight: 600;
-    font-size: 1.1rem;
+  .tab-btn {
+    font-family: 'Space Grotesk', sans-serif;
+    background: none; border: none; cursor: pointer;
+    padding: 0.75rem 1rem; font-size: 0.95rem; font-weight: 600;
+    color: var(--text-muted); border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
   }
-  
-  /* Status Badges */
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .card {
+    background: var(--card-bg); border-radius: 14px; padding: 1.25rem 1.5rem;
+    border: 1px solid var(--border); margin-bottom: 1.5rem;
+  }
+
+  .range-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; }
+  .field { display: flex; flex-direction: column; gap: 0.35rem; }
+  .field label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+  input[type="date"], input[type="text"] {
+    font-family: inherit; padding: 0.5rem 0.65rem; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text-main);
+    font-size: 0.9rem;
+  }
+  button.primary {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600;
+    background: var(--primary); color: #fff; border: none;
+    padding: 0.55rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+  }
+  button.ghost {
+    font-family: inherit; background: transparent; border: 1px solid var(--border);
+    color: var(--text-muted); padding: 0.5rem 0.8rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+  }
+
+  .progress-header { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.6rem; font-size: 0.9rem; }
+  .progress-wrap { height: 10px; background: var(--border); border-radius: 999px; overflow: hidden; }
+  .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.4s; }
+
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.15rem; font-weight: 700; margin: 1.75rem 0 0.9rem;
+  }
+
+  .today-card {
+    background: linear-gradient(to right bottom, var(--primary-light), var(--card-bg));
+    border: 2px solid var(--primary); border-radius: 14px; padding: 1.5rem;
+  }
+
+  .add-row { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+  .add-row input[type="text"] { flex: 1; }
+
+  .days-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1rem; }
+  .day-card {
+    background: var(--card-bg); border-radius: 12px; padding: 1.1rem;
+    border: 1px solid var(--border); display: flex; flex-direction: column;
+  }
+  .day-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 0.75rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border);
+  }
+  .day-title { font-weight: 600; font-family: 'Space Grotesk', sans-serif; }
+  .day-title small { opacity: 0.55; font-weight: 400; margin-left: 0.4rem; }
+
   .badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.7rem;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap;
   }
   .badge.achieved { background: var(--success-light); color: var(--success); }
   .badge.missed { background: var(--danger-light); color: var(--danger); }
   .badge.pending { background: var(--pending-light); color: var(--pending); }
   .badge.today { background: var(--primary); color: white; }
+  .badge.empty { background: var(--pending-light); color: var(--pending); }
 
-  /* Tasks */
-  .task-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    flex-grow: 1;
-  }
-  .task {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    cursor: pointer;
-    font-size: 0.95rem;
-  }
+  .task-list { display: flex; flex-direction: column; gap: 0.55rem; flex-grow: 1; }
+  .task { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.9rem; }
   .task input[type="checkbox"] {
-    appearance: none;
-    background-color: var(--card-bg);
-    margin: 0.15rem 0 0 0;
-    font: inherit;
-    color: currentColor;
-    width: 1.15em;
-    height: 1.15em;
-    border: 2px solid var(--text-muted);
-    border-radius: 0.25em;
-    display: grid;
-    place-content: center;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: all 0.2s;
+    appearance: none; margin: 0.15rem 0 0 0; width: 1.1em; height: 1.1em;
+    border: 2px solid var(--text-muted); border-radius: 0.25em; display: grid;
+    place-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.2s; background: var(--card-bg);
   }
   .task input[type="checkbox"]::before {
-    content: "";
-    width: 0.65em;
-    height: 0.65em;
+    content: ""; width: 0.62em; height: 0.62em;
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-    transform: scale(0);
-    transform-origin: bottom left;
-    transition: 120ms transform ease-in-out;
+    transform: scale(0); transform-origin: bottom left; transition: 120ms transform ease-in-out;
     background-color: white;
   }
-  .task input[type="checkbox"]:checked {
-    background-color: var(--success);
-    border-color: var(--success);
+  .task input[type="checkbox"]:checked { background-color: var(--success); border-color: var(--success); }
+  .task input[type="checkbox"]:checked::before { transform: scale(1); }
+  .task span.completed { text-decoration: line-through; color: var(--text-muted); opacity: 0.7; }
+  .task .del { margin-left: auto; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.8rem; }
+  .empty-state { color: var(--text-muted); font-style: italic; font-size: 0.9rem; }
+
+  .topic-group { margin-bottom: 1.25rem; }
+  .topic-group h3 {
+    font-family: 'Space Grotesk', sans-serif; font-size: 1rem; margin-bottom: 0.6rem;
+    display: flex; justify-content: space-between; align-items: center;
   }
-  .task input[type="checkbox"]:checked::before {
-    transform: scale(1);
+  .topic-group h3 .count { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+  .topic-item {
+    display: flex; align-items: center; gap: 0.65rem; padding: 0.5rem 0.15rem;
+    border-bottom: 1px solid var(--border); font-size: 0.9rem;
   }
-  .task span {
-    transition: color 0.2s, text-decoration 0.2s;
+  .topic-item input[type="checkbox"] {
+    appearance: none; width: 1.1em; height: 1.1em; border: 2px solid var(--text-muted);
+    border-radius: 50%; display: grid; place-content: center; cursor: pointer; flex-shrink: 0;
+    background: var(--card-bg);
   }
-  .task span.completed {
-    text-decoration: line-through;
-    color: var(--text-muted);
-    opacity: 0.7;
+  .topic-item input[type="checkbox"]::before {
+    content: ""; width: 0.55em; height: 0.55em; border-radius: 50%;
+    transform: scale(0); transition: 120ms transform ease-in-out; background-color: white;
   }
+  .topic-item input[type="checkbox"]:checked { background-color: var(--accent); border-color: var(--accent); }
+  .topic-item input[type="checkbox"]:checked::before { transform: scale(1); }
+  .topic-item span.done { text-decoration: line-through; color: var(--text-muted); opacity: 0.7; }
 
   button.reset-btn {
-    display: block;
-    width: 100%;
-    margin-top: 2rem;
-    padding: 0.75rem;
-    border: 1px solid var(--danger);
-    border-radius: 8px;
-    background: transparent;
-    color: var(--danger);
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
+    display: block; margin-top: 1.5rem; padding: 0.6rem 1rem; border: 1px solid var(--danger);
+    border-radius: 8px; background: transparent; color: var(--danger); font-weight: 600;
+    cursor: pointer; font-size: 0.85rem;
   }
-  button.reset-btn:hover {
-    background: var(--danger);
-    color: white;
-  }
-  
-  .empty-state {
-    color: var(--text-muted);
-    font-style: italic;
-  }
+  .loading { color: var(--text-muted); font-size: 0.85rem; }
 </style>
 </head>
 <body>
-
 <div class="container">
   <div class="header">
-    <h1>🚀 Backend Mastery Tracker</h1>
-    <div class="meta">Aug 10, 2026 — Aug 29, 2026 • 3H Daily • 60H Total</div>
+    <h1>Backend Mastery Tracker</h1>
+    <div class="meta" id="rangeMeta">Loading your plan…</div>
   </div>
 
-  <div class="progress-card">
-    <div class="progress-header">
-      <span>Journey Progress</span>
-      <span id="progressText">0 / 20 Days Completed (0%)</span>
-    </div>
-    <div class="progress-wrap">
-      <div class="progress-bar" id="progressBar"></div>
-    </div>
-    <div class="totals">
-      <div>Java Core/Adv: <strong>14H</strong></div>
-      <div>Git & DSA: <strong>8H</strong></div>
-      <div>Spring & Sec: <strong>33H</strong></div>
-      <div>Buffer: <strong>5H</strong></div>
-    </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="quick">Today &amp; Tomorrow</button>
+    <button class="tab-btn" data-tab="daily">Daily Tracker</button>
+    <button class="tab-btn" data-tab="topics">Topics Checklist</button>
   </div>
 
-  <div class="today-section">
-    <h2 class="section-title">✨ Today's Mission</h2>
-    <div id="today-container">
-      <!-- Today's tasks will be injected here -->
-    </div>
+  <!-- QUICK TAB: today + tomorrow only -->
+  <div class="tab-panel active" id="tab-quick">
+    <h2 class="section-title" style="margin-top:0">Today &amp; Tomorrow</h2>
+    <div class="days-grid" id="quick-container"><div class="loading">Loading…</div></div>
   </div>
 
-  <div>
-    <h2 class="section-title">📅 All Days Overview</h2>
-    <div class="days-grid" id="all-days-container">
-      <!-- Grid of all days will be injected here -->
+  <!-- DAILY TAB -->
+  <div class="tab-panel" id="tab-daily">
+
+    <div class="card">
+      <div class="range-row">
+        <div class="field">
+          <label for="startDate">Start date</label>
+          <input type="date" id="startDate">
+        </div>
+        <div class="field">
+          <label for="endDate">End date</label>
+          <input type="date" id="endDate">
+        </div>
+        <button class="primary" id="applyRangeBtn">Apply range</button>
+      </div>
     </div>
+
+    <div class="card">
+      <div class="progress-header">
+        <span>Journey Progress</span>
+        <span id="progressText">0 / 0 days</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    </div>
+
+    <h2 class="section-title">Today</h2>
+    <div id="today-container"><div class="loading">Loading…</div></div>
+
+    <h2 class="section-title">All Days</h2>
+    <div class="days-grid" id="all-days-container"><div class="loading">Loading…</div></div>
+
+    <button class="reset-btn" id="resetDailyBtn">Reset all daily to-dos</button>
   </div>
 
-  <button class="reset-btn" onclick="resetTracker()">Reset All Progress</button>
+  <!-- TOPICS TAB -->
+  <div class="tab-panel" id="tab-topics">
+    <div class="card">
+      <div class="progress-header">
+        <span>Topics Mastered</span>
+        <span id="topicsProgressText">0 / 0</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" id="topicsProgressBar"></div></div>
+    </div>
+    <div id="topics-container"><div class="loading">Loading…</div></div>
+    <button class="reset-btn" id="resetTopicsBtn">Reset topics checklist</button>
+  </div>
 </div>
 
 <script>
-// Base Data parsed from the original prompt with strict dates added
-const schedule = [
-  { id: 1, date: "2026-08-10", label: "Day 1", subtitle: "Aug 10", tasks: [["Spring", "1.5H"], ["Java Core & Advanced — Revision", "1.5H"]] },
-  { id: 2, date: "2026-08-11", label: "Day 2", subtitle: "Aug 11", tasks: [["Spring", "1.5H"], ["Java Core & Advanced — Revision", "1.5H"]] },
-  { id: 3, date: "2026-08-12", label: "Day 3", subtitle: "Aug 12", tasks: [["Spring", "1.5H"], ["Java Core & Advanced — Revision", "1.5H"]] },
-  { id: 4, date: "2026-08-13", label: "Day 4", subtitle: "Aug 13", tasks: [["Spring", "1.5H"], ["Java Core & Advanced — Revision", "1.5H"]] },
-  { id: 5, date: "2026-08-14", label: "Day 5", subtitle: "Aug 14", tasks: [["Spring", "1.5H"], ["Java Core & Advanced — Revision", "1.5H"]] },
-  { id: 6, date: "2026-08-15", label: "Day 6", subtitle: "Aug 15", tasks: [["Spring", "1.5H"], ["Java Core & Advanced — Revision", "1.5H"]] },
-  { id: 7, date: "2026-08-16", label: "Day 7", subtitle: "Aug 16", tasks: [["Spring", "1.5H"], ["Java Core & Advanced — Revision", "1.5H"]] },
-  { id: 8, date: "2026-08-17", label: "Day 8", subtitle: "Aug 17", tasks: [["Spring", "1.5H"], ["Java Core & Advanced — Revision", "1.5H"]] },
-  { id: 9, date: "2026-08-18", label: "Day 9", subtitle: "Aug 18", tasks: [["Spring", "1.5H"], ["Java Core & Advanced — Revision", "1H"], ["Git & DSA — Revision", "0.5H"]] },
-  { id: 10, date: "2026-08-19", label: "Day 10", subtitle: "Aug 19", tasks: [["Spring", "1.5H"], ["Java Core & Advanced — Revision", "1H"], ["Git & DSA — Revision", "0.5H"]] },
-  { id: 11, date: "2026-08-20", label: "Day 11", subtitle: "Aug 20", tasks: [["Spring", "2H"], ["Git & DSA — Revision", "1H"]] },
-  { id: 12, date: "2026-08-21", label: "Day 12", subtitle: "Aug 21", tasks: [["Spring", "2H"], ["Git & DSA — Revision", "1H"]] },
-  { id: 13, date: "2026-08-22", label: "Day 13", subtitle: "Aug 22", tasks: [["Spring", "2H"], ["Git & DSA — Revision", "1H"]] },
-  { id: 14, date: "2026-08-23", label: "Day 14", subtitle: "Aug 23", tasks: [["Spring", "2H"], ["Git & DSA — Revision", "1H"]] },
-  { id: 15, date: "2026-08-24", label: "Day 15", subtitle: "Aug 24", tasks: [["Spring", "2H"], ["Git & DSA — Revision", "1H"]] },
-  { id: 16, date: "2026-08-25", label: "Day 16", subtitle: "Aug 25", tasks: [["Spring", "2H"], ["Git & DSA — Revision", "1H"]] },
-  { id: 17, date: "2026-08-26", label: "Day 17", subtitle: "Aug 26", tasks: [["Spring", "2H"], ["Git & DSA — Revision", "1H"]] },
-  { id: 18, date: "2026-08-27", label: "Day 18", subtitle: "Aug 27", tasks: [["Spring", "2H"], ["Review / Practice Buffer", "1H"]] },
-  { id: 19, date: "2026-08-28", label: "Day 19", subtitle: "Aug 28", tasks: [["Spring", "2H"], ["Review / Practice Buffer", "1H"]] },
-  { id: 20, date: "2026-08-29", label: "Day 20", subtitle: "Aug 29", tasks: [["Review / Practice Buffer", "3H"]] }
+// ---------- Topic catalog ----------
+const topicCatalog = [
+  { group: "Java Basics", items: [
+    "Data types, variables, and operators",
+    "Control flow (if-else, loops, switch)",
+    "OOP: Inheritance, Polymorphism, Encapsulation, Abstraction",
+    "Classes, Objects, Interfaces, Abstract Classes",
+    "Method overloading and overriding",
+    "Static and final keywords"
+  ]},
+  { group: "Java Collections Framework", items: [
+    "List, Set, Map, Queue implementations",
+    "Internal working of HashMap, ConcurrentHashMap, Hashtable",
+    "Iterators and Comparators",
+    "Fail-fast vs. Fail-safe iterators"
+  ]},
+  { group: "Exception Handling", items: [
+    "Checked vs. Unchecked exceptions",
+    "Custom exceptions",
+    "Try-with-resources"
+  ]},
+  { group: "Multithreading and Concurrency", items: [
+    "Thread life cycle and states",
+    "Creating threads (extends Thread vs. implements Runnable)",
+    "Synchronization, volatile, and atomic variables",
+    "Thread pools and ExecutorService",
+    "Concurrent collections (ConcurrentHashMap, BlockingQueue)",
+    "Deadlock, livelock, and race conditions",
+    "CompletableFuture and async programming"
+  ]},
+  { group: "Java Memory Management", items: [
+    "JVM architecture (Heap, Stack, Method Area)",
+    "Garbage Collection algorithms and tuning",
+    "Memory leaks and how to avoid them"
+  ]},
+  { group: "Java 8+ Features", items: [
+    "Lambda expressions",
+    "Streams API",
+    "Functional interfaces (Predicate, Consumer, Supplier)",
+    "Optional class",
+    "Date and Time API (java.time)",
+    "Default and static methods in interfaces"
+  ]},
+  { group: "Spring Framework", items: [
+    "Spring Core: DI and IoC",
+    "Spring Boot: auto-config, starters, properties",
+    "Spring MVC: request flow, controllers, REST APIs",
+    "Spring Data JPA: repositories, entity mapping, query methods",
+    "Spring Security: authN, authZ, OAuth2",
+    "Spring AOP"
+  ]},
+  { group: "RESTful Web Services", items: [
+    "REST principles (statelessness, HTTP methods, status codes)",
+    "Designing REST APIs (naming, versioning, pagination)",
+    "Error handling and validation",
+    "HATEOAS"
+  ]},
+  { group: "Microservices Architecture", items: [
+    "Monolithic vs. Microservices",
+    "Service discovery (Eureka, Consul)",
+    "API Gateway (Spring Cloud Gateway, Zuul)",
+    "Communication (REST, gRPC, messaging queues)",
+    "Circuit Breaker (Resilience4j, Hystrix)",
+    "Distributed tracing and logging (Sleuth, Zipkin)"
+  ]},
+  { group: "Database and ORM", items: [
+    "SQL vs. NoSQL databases",
+    "JDBC and connection pooling (HikariCP)",
+    "Hibernate and JPA (EntityManager, caching, lazy loading)",
+    "Transactions and isolation levels",
+    "Database indexing and optimization"
+  ]},
+  { group: "Caching", items: [
+    "In-memory caching (Ehcache, Caffeine)",
+    "Distributed caching (Redis, Memcached)",
+    "Cache eviction policies and strategies"
+  ]},
+  { group: "System Design Principles", items: [
+    "SOLID principles",
+    "Design patterns (Singleton, Factory, Builder, Observer, Strategy...)"
+  ]},
+  { group: "Scalability and Performance", items: [
+    "Horizontal vs. Vertical scaling",
+    "Load balancing"
+  ]},
+  { group: "API Design", items: [
+    "REST vs. GraphQL vs. SOAP",
+    "API versioning and backward compatibility",
+    "Rate limiting and throttling"
+  ]},
+  { group: "Cloud and DevOps", items: [
+    "Cloud platforms (AWS, Azure, GCP)",
+    "Containerization (Docker, Kubernetes)",
+    "CI/CD pipelines (Jenkins, GitLab CI, GitHub Actions)"
+  ]},
+  { group: "Testing", items: [
+    "Unit Testing: JUnit, Mockito",
+    "Integration Testing: Spring Boot Test, H2",
+    "Performance Testing: JMeter, Gatling, load/stress testing"
+  ]},
+  { group: "Tools and Technologies", items: [
+    "Build Tools: Maven and Gradle",
+    "Version Control: Git (branching, merging, rebasing)",
+    "Monitoring and Logging (Log4j, SLF4J, Prometheus, Grafana, ELK)",
+    "Code Quality (SonarQube, Checkstyle, PMD)"
+  ]},
+  { group: "Behavioral and Soft Skills", items: [
+    "Problem-Solving (LeetCode/HackerRank/Codeforces, DSA)",
+    "Communication (explaining thought process, past projects)",
+    "Leadership (mentoring, handling conflicts)"
+  ]}
 ];
 
-const todayContainer = document.getElementById('today-container');
-const allDaysContainer = document.getElementById('all-days-container');
+// ---------- Storage keys ----------
+const K_RANGE = "tracker:range";
+const K_TODOS = "tracker:todos"; // { "2026-08-20": [{text, done}], ... }
+const K_TOPICS = "tracker:topics"; // { "group|index": true }
 
-// Get current date stripping time to correctly compare days
-const currentDate = new Date();
-currentDate.setHours(0, 0, 0, 0);
+let range = { start: null, end: null };
+let todos = {};
+let topicState = {};
 
-function getDayStatus(dayDateStr, tasksCompleted) {
-    const dayDate = new Date(dayDateStr + "T00:00:00");
-    const isPast = dayDate < currentDate;
-    const isToday = dayDate.getTime() === currentDate.getTime();
-    
-    if (tasksCompleted) return { class: 'achieved', text: 'Achieved' };
-    if (isToday) return { class: 'today', text: 'Today' };
-    if (isPast) return { class: 'missed', text: 'Missed' };
-    return { class: 'pending', text: 'Pending' };
+// All date math below works on local calendar dates only (no UTC conversion),
+// which avoids the timezone shift that caused every day to compare equal to "today".
+function toLocalStr(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+function todayStr() {
+  return toLocalStr(new Date());
+}
+function addDays(dateStr, n) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  dt.setDate(dt.getDate() + n);
+  return toLocalStr(dt);
+}
+function fmt(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  return dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
-function renderApp() {
-    todayContainer.innerHTML = '';
-    allDaysContainer.innerHTML = '';
-    let completedDaysCount = 0;
-    let todayFound = false;
+async function loadAll() {
+  try {
+    const r = await window.storage.get(K_RANGE, false);
+    range = r ? JSON.parse(r.value) : null;
+  } catch (e) { range = null; }
+  try {
+    const t = await window.storage.get(K_TODOS, false);
+    todos = t ? JSON.parse(t.value) : {};
+  } catch (e) { todos = {}; }
+  try {
+    const tp = await window.storage.get(K_TOPICS, false);
+    topicState = tp ? JSON.parse(tp.value) : {};
+  } catch (e) { topicState = {}; }
 
-    schedule.forEach((day) => {
-        // Evaluate completion from localStorage
-        let allTasksCompleted = true;
-        
-        const tasksHTML = day.tasks.map((task, idx) => {
-            const key = `tracker-v3-day${day.id}-task${idx}`;
-            const isChecked = localStorage.getItem(key) === "true";
-            if (!isChecked) allTasksCompleted = false;
-            
-            return `
-                <label class="task">
-                    <input type="checkbox" data-key="${key}" ${isChecked ? 'checked' : ''} onchange="toggleTask(this)">
-                    <span class="${isChecked ? 'completed' : ''}">${task[0]} — <small>${task[1]}</small></span>
-                </label>
-            `;
-        }).join('');
+  if (!range) {
+    const s = todayStr();
+    range = { start: s, end: addDays(s, 19) };
+    await saveRange();
+  }
+  document.getElementById('startDate').value = range.start;
+  document.getElementById('endDate').value = range.end;
+}
 
-        if (allTasksCompleted) completedDaysCount++;
+async function saveRange() {
+  await window.storage.set(K_RANGE, JSON.stringify(range), false);
+}
+async function saveTodos() {
+  await window.storage.set(K_TODOS, JSON.stringify(todos), false);
+}
+async function saveTopics() {
+  await window.storage.set(K_TOPICS, JSON.stringify(topicState), false);
+}
 
-        const status = getDayStatus(day.date, allTasksCompleted);
-        const dayDate = new Date(day.date + "T00:00:00");
-        const isToday = dayDate.getTime() === currentDate.getTime();
+function getDatesInRange() {
+  const dates = [];
+  let cur = range.start;
+  let guard = 0;
+  while (cur <= range.end && guard < 400) {
+    dates.push(cur);
+    cur = addDays(cur, 1);
+    guard++;
+  }
+  return dates;
+}
 
-        const cardHTML = `
-            <div class="${isToday ? 'today-card' : 'day-card'}">
-                <div class="day-header">
-                    <div class="day-title">${day.label} <span style="opacity:0.5; font-size: 0.9rem; font-weight: 400; margin-left: 0.5rem">${day.subtitle}</span></div>
-                    <span class="badge ${status.class}">${status.text}</span>
-                </div>
-                <div class="task-list">
-                    ${tasksHTML}
-                </div>
-            </div>
-        `;
+function dayStatus(dateStr) {
+  const list = todos[dateStr] || [];
+  const t = todayStr();
+  if (list.length === 0) {
+    if (dateStr === t) return { cls: 'today', text: 'Today' };
+    if (dateStr < t) return { cls: 'empty', text: 'No tasks' };
+    return { cls: 'pending', text: 'Pending' };
+  }
+  const allDone = list.every(x => x.done);
+  if (allDone) return { cls: 'achieved', text: 'Achieved' };
+  if (dateStr === t) return { cls: 'today', text: 'Today' };
+  if (dateStr < t) return { cls: 'missed', text: 'Missed' };
+  return { cls: 'pending', text: 'Pending' };
+}
 
-        if (isToday) {
-            todayContainer.innerHTML = cardHTML;
-            todayFound = true;
-        }
+function taskListHTML(dateStr) {
+  const list = todos[dateStr] || [];
+  if (list.length === 0) {
+    return `<div class="empty-state">No to-dos yet. Add what you want to achieve.</div>`;
+  }
+  return list.map((task, idx) => `
+    <label class="task">
+      <input type="checkbox" ${task.done ? 'checked' : ''} data-date="${dateStr}" data-idx="${idx}" class="task-check">
+      <span class="${task.done ? 'completed' : ''}">${escapeHTML(task.text)}</span>
+      <button class="del" data-date="${dateStr}" data-idx="${idx}" title="Remove">✕</button>
+    </label>
+  `).join('');
+}
 
-        allDaysContainer.innerHTML += cardHTML;
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function dayCardHTML(dateStr, label, isToday, showAdd) {
+  const status = dayStatus(dateStr);
+  const addRow = showAdd ? `
+      <div class="add-row">
+        <input type="text" placeholder="Add a to-do…" class="new-task-input" data-date="${dateStr}">
+        <button class="primary add-task-btn" data-date="${dateStr}">Add</button>
+      </div>` : '';
+  return `
+    <div class="${isToday ? 'today-card' : 'day-card'}" data-date="${dateStr}">
+      <div class="day-header">
+        <div class="day-title">${label}<small>${fmt(dateStr)}</small></div>
+        <span class="badge ${status.cls}">${status.text}</span>
+      </div>
+      <div class="task-list">${taskListHTML(dateStr)}</div>
+      ${addRow}
+    </div>
+  `;
+}
+
+// Renders day cards into any container and wires up their controls.
+// scoping handlers to the container avoids cross-tab duplicate bindings.
+function renderInto(container, dates, labels, onChange) {
+  const t = todayStr();
+  container.innerHTML = dates.map((d, i) => dayCardHTML(d, labels[i], d === t)).join('');
+
+  container.querySelectorAll('.task-check').forEach(el => {
+    el.addEventListener('change', async (e) => {
+      const date = e.target.dataset.date;
+      const idx = parseInt(e.target.dataset.idx, 10);
+      todos[date][idx].done = e.target.checked;
+      await saveTodos();
+      onChange();
     });
-
-    if (!todayFound) {
-        todayContainer.innerHTML = `<div class="empty-state">No specific tasks scheduled for today. You're outside the active tracker window!</div>`;
-    }
-
-    updateProgress(completedDaysCount);
-}
-
-function toggleTask(checkbox) {
-    const key = checkbox.getAttribute('data-key');
-    localStorage.setItem(key, checkbox.checked);
-    renderApp(); // Re-render to update statuses and cross-outs dynamically
-}
-
-function updateProgress(completedCount) {
-    const totalDays = schedule.length;
-    const percent = Math.round((completedCount / totalDays) * 100);
-    document.getElementById("progressText").textContent = `${completedCount} / ${totalDays} Days Completed (${percent}%)`;
-    document.getElementById("progressBar").style.width = percent + "%";
-}
-
-function resetTracker() {
-    if (!confirm("Are you sure you want to reset all progress? This cannot be undone.")) return;
-    schedule.forEach(day => {
-        day.tasks.forEach((_, idx) => {
-            localStorage.removeItem(`tracker-v3-day${day.id}-task${idx}`);
-        });
+  });
+  container.querySelectorAll('.del').forEach(el => {
+    el.addEventListener('click', async (e) => {
+      const date = e.target.dataset.date;
+      const idx = parseInt(e.target.dataset.idx, 10);
+      todos[date].splice(idx, 1);
+      await saveTodos();
+      onChange();
     });
-    renderApp();
+  });
+  container.querySelectorAll('.add-task-btn').forEach(el => {
+    el.addEventListener('click', async (e) => {
+      const date = e.target.dataset.date;
+      const input = container.querySelector(`.new-task-input[data-date="${date}"]`);
+      const val = input.value.trim();
+      if (!val) return;
+      if (!todos[date]) todos[date] = [];
+      todos[date].push({ text: val, done: false });
+      await saveTodos();
+      onChange();
+    });
+  });
+  container.querySelectorAll('.new-task-input').forEach(el => {
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        container.querySelector(`.add-task-btn[data-date="${e.target.dataset.date}"]`).click();
+      }
+    });
+  });
 }
 
-// Initial Load
-renderApp();
+function renderDaily() {
+  const dates = getDatesInRange();
+  const t = todayStr();
+  document.getElementById('rangeMeta').textContent =
+    `${fmt(range.start)} — ${fmt(range.end)} • ${dates.length} day${dates.length !== 1 ? 's' : ''}`;
+
+  const todayContainer = document.getElementById('today-container');
+  if (dates.includes(t)) {
+    const idx = dates.indexOf(t) + 1;
+    renderInto(todayContainer, [t], [`Day ${idx}`], renderDaily);
+  } else {
+    todayContainer.innerHTML = `<div class="empty-state">Today is outside your selected date range.</div>`;
+  }
+
+  const allContainer = document.getElementById('all-days-container');
+  renderInto(allContainer, dates, dates.map((d, i) => `Day ${i+1}`), renderDaily);
+
+  const achievedCount = dates.filter(d => {
+    const list = todos[d] || [];
+    return list.length > 0 && list.every(x => x.done);
+  }).length;
+  const pct = dates.length ? Math.round((achievedCount / dates.length) * 100) : 0;
+  document.getElementById('progressText').textContent = `${achievedCount} / ${dates.length} days`;
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+function renderQuick() {
+  const t = todayStr();
+  const tmr = addDays(t, 1);
+  const container = document.getElementById('quick-container');
+  renderInto(container, [t, tmr], ['Today', 'Tomorrow'], renderQuick);
+}
+
+function renderTopics() {
+  const container = document.getElementById('topics-container');
+  let total = 0, done = 0;
+  container.innerHTML = topicCatalog.map(group => {
+    let groupDone = 0;
+    const itemsHTML = group.items.map((item, idx) => {
+      const key = `${group.group}|${idx}`;
+      const checked = !!topicState[key];
+      total++; if (checked) { done++; groupDone++; }
+      return `
+        <label class="topic-item">
+          <input type="checkbox" class="topic-check" data-key="${key}" ${checked ? 'checked' : ''}>
+          <span class="${checked ? 'done' : ''}">${escapeHTML(item)}</span>
+        </label>
+      `;
+    }).join('');
+    return `
+      <div class="topic-group">
+        <h3>${group.group} <span class="count">${groupDone}/${group.items.length}</span></h3>
+        ${itemsHTML}
+      </div>
+    `;
+  }).join('');
+
+  const pct = total ? Math.round((done/total)*100) : 0;
+  document.getElementById('topicsProgressText').textContent = `${done} / ${total}`;
+  document.getElementById('topicsProgressBar').style.width = pct + '%';
+
+  document.querySelectorAll('.topic-check').forEach(el => {
+    el.addEventListener('change', async (e) => {
+      topicState[e.target.dataset.key] = e.target.checked;
+      await saveTopics();
+      renderTopics();
+    });
+  });
+}
+
+// ---------- Tabs ----------
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ---------- Range control ----------
+document.getElementById('applyRangeBtn').addEventListener('click', async (e) => {
+  e.preventDefault();
+  const s = document.getElementById('startDate').value;
+  const en = document.getElementById('endDate').value;
+  if (!s || !en) { alert('Please choose both a start and end date.'); return; }
+  if (s > en) { alert('Start date must be before end date.'); return; }
+  const span = (new Date(en) - new Date(s)) / 86400000;
+  if (span > 365) { alert('Please choose a range of 365 days or fewer.'); return; }
+  range = { start: s, end: en };
+  await saveRange();
+  renderDaily();
+});
+
+// ---------- Resets ----------
+document.getElementById('resetDailyBtn').addEventListener('click', async () => {
+  if (!confirm('Clear all daily to-dos? This cannot be undone.')) return;
+  todos = {};
+  await saveTodos();
+  renderDaily();
+  renderQuick();
+});
+document.getElementById('resetTopicsBtn').addEventListener('click', async () => {
+  if (!confirm('Reset the topics checklist? This cannot be undone.')) return;
+  topicState = {};
+  await saveTopics();
+  renderTopics();
+});
+
+// ---------- Init ----------
+(async function init() {
+  await loadAll();
+  renderQuick();
+  renderDaily();
+  renderTopics();
+})();
 </script>
 </body>
 </html>
