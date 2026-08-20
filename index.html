@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>Backend Mastery Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -39,6 +39,7 @@
     }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
@@ -57,13 +58,14 @@
   .tabs {
     display: flex; gap: 0.5rem; margin-bottom: 1.5rem;
     border-bottom: 1px solid var(--border);
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
   }
   .tab-btn {
     font-family: 'Space Grotesk', sans-serif;
     background: none; border: none; cursor: pointer;
     padding: 0.75rem 1rem; font-size: 0.95rem; font-weight: 600;
     color: var(--text-muted); border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
+    margin-bottom: -1px; white-space: nowrap; flex-shrink: 0;
   }
   .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
   .tab-panel { display: none; }
@@ -75,24 +77,25 @@
   }
 
   .range-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; }
-  .field { display: flex; flex-direction: column; gap: 0.35rem; }
+  .field { display: flex; flex-direction: column; gap: 0.35rem; flex: 1 1 140px; min-width: 140px; }
   .field label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
   input[type="date"], input[type="text"] {
     font-family: inherit; padding: 0.5rem 0.65rem; border-radius: 8px;
     border: 1px solid var(--border); background: var(--bg); color: var(--text-main);
-    font-size: 0.9rem;
+    font-size: 16px; width: 100%;
   }
   button.primary {
     font-family: 'Space Grotesk', sans-serif; font-weight: 600;
     background: var(--primary); color: #fff; border: none;
-    padding: 0.55rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+    padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+    white-space: nowrap;
   }
   button.ghost {
     font-family: inherit; background: transparent; border: 1px solid var(--border);
     color: var(--text-muted); padding: 0.5rem 0.8rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
   }
 
-  .progress-header { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.6rem; font-size: 0.9rem; }
+  .progress-header { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.6rem; font-size: 0.9rem; gap: 0.5rem; flex-wrap: wrap; }
   .progress-wrap { height: 10px; background: var(--border); border-radius: 999px; overflow: hidden; }
   .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.4s; }
 
@@ -106,8 +109,9 @@
     border: 2px solid var(--primary); border-radius: 14px; padding: 1.5rem;
   }
 
-  .add-row { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
-  .add-row input[type="text"] { flex: 1; }
+  .add-row { display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
+  .add-row input[type="text"] { flex: 1 1 160px; }
+  .add-row button { flex-shrink: 0; }
 
   .days-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1rem; }
   .day-card {
@@ -117,6 +121,7 @@
   .day-header {
     display: flex; justify-content: space-between; align-items: flex-start;
     margin-bottom: 0.75rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border);
+    gap: 0.5rem;
   }
   .day-title { font-weight: 600; font-family: 'Space Grotesk', sans-serif; }
   .day-title small { opacity: 0.55; font-weight: 400; margin-left: 0.4rem; }
@@ -134,7 +139,7 @@
   .task-list { display: flex; flex-direction: column; gap: 0.55rem; flex-grow: 1; }
   .task { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.9rem; }
   .task input[type="checkbox"] {
-    appearance: none; margin: 0.15rem 0 0 0; width: 1.1em; height: 1.1em;
+    appearance: none; margin: 0.15rem 0 0 0; width: 1.2em; height: 1.2em;
     border: 2px solid var(--text-muted); border-radius: 0.25em; display: grid;
     place-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.2s; background: var(--card-bg);
   }
@@ -147,21 +152,27 @@
   .task input[type="checkbox"]:checked { background-color: var(--success); border-color: var(--success); }
   .task input[type="checkbox"]:checked::before { transform: scale(1); }
   .task span.completed { text-decoration: line-through; color: var(--text-muted); opacity: 0.7; }
-  .task .del { margin-left: auto; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.8rem; }
+  .task .del { margin-left: auto; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; padding: 0.2rem 0.4rem; flex-shrink: 0; }
+  .task-readonly { align-items: center; }
+  .status-dot {
+    width: 0.7em; height: 0.7em; border-radius: 50%; flex-shrink: 0;
+    background: var(--pending); opacity: 0.5;
+  }
+  .status-dot.done { background: var(--success); opacity: 1; }
   .empty-state { color: var(--text-muted); font-style: italic; font-size: 0.9rem; }
 
   .topic-group { margin-bottom: 1.25rem; }
   .topic-group h3 {
     font-family: 'Space Grotesk', sans-serif; font-size: 1rem; margin-bottom: 0.6rem;
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;
   }
-  .topic-group h3 .count { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+  .topic-group h3 .count { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; white-space: nowrap; }
   .topic-item {
-    display: flex; align-items: center; gap: 0.65rem; padding: 0.5rem 0.15rem;
+    display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 0.15rem;
     border-bottom: 1px solid var(--border); font-size: 0.9rem;
   }
   .topic-item input[type="checkbox"] {
-    appearance: none; width: 1.1em; height: 1.1em; border: 2px solid var(--text-muted);
+    appearance: none; width: 1.2em; height: 1.2em; border: 2px solid var(--text-muted);
     border-radius: 50%; display: grid; place-content: center; cursor: pointer; flex-shrink: 0;
     background: var(--card-bg);
   }
@@ -176,9 +187,28 @@
   button.reset-btn {
     display: block; margin-top: 1.5rem; padding: 0.6rem 1rem; border: 1px solid var(--danger);
     border-radius: 8px; background: transparent; color: var(--danger); font-weight: 600;
-    cursor: pointer; font-size: 0.85rem;
+    cursor: pointer; font-size: 0.85rem; width: 100%; max-width: 260px;
   }
   .loading { color: var(--text-muted); font-size: 0.85rem; }
+  .storage-warning {
+    background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent);
+    border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.85rem; margin-bottom: 1.5rem;
+  }
+
+  /* ---- Mobile responsiveness ---- */
+  @media (max-width: 640px) {
+    body { padding: 1.25rem 0.75rem 3rem; }
+    .header h1 { font-size: 1.5rem; }
+    .card { padding: 1rem; border-radius: 12px; }
+    .days-grid { grid-template-columns: 1fr; }
+    .range-row { flex-direction: column; align-items: stretch; }
+    .range-row .field { min-width: 0; }
+    .range-row button.primary { width: 100%; }
+    .day-header { flex-wrap: wrap; }
+    .tab-btn { padding: 0.65rem 0.75rem; font-size: 0.88rem; }
+    .section-title { font-size: 1.05rem; }
+    button.reset-btn { max-width: none; }
+  }
 </style>
 </head>
 <body>
@@ -187,6 +217,8 @@
     <h1>Backend Mastery Tracker</h1>
     <div class="meta" id="rangeMeta">Loading your plan…</div>
   </div>
+
+  <div id="storageWarning"></div>
 
   <div class="tabs">
     <button class="tab-btn active" data-tab="quick">Today &amp; Tomorrow</button>
@@ -225,6 +257,8 @@
       <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
     </div>
 
+    <p class="meta" style="margin-bottom: 0.5rem;">To-dos are added from the "Today &amp; Tomorrow" tab. This view just shows what was planned each day and whether it was achieved.</p>
+
     <h2 class="section-title">Today</h2>
     <div id="today-container"><div class="loading">Loading…</div></div>
 
@@ -249,6 +283,46 @@
 </div>
 
 <script>
+// ---------- Storage layer ----------
+// The original version of this tracker used `window.storage`, an API that only
+// exists inside Claude.ai artifacts. On a plain static host like GitHub Pages
+// that object doesn't exist, every storage call throws, and the page never
+// gets past "Loading…". This wrapper uses localStorage instead, which works
+// on any static host (data is saved per-browser, on that device).
+const storage = {
+  async get(key) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw === null) return null;
+      return { key, value: raw };
+    } catch (e) {
+      return null;
+    }
+  },
+  async set(key, value) {
+    try {
+      localStorage.setItem(key, value);
+      return { key, value };
+    } catch (e) {
+      console.error('Storage error:', e);
+      return null;
+    }
+  }
+};
+
+// Warn the user (once) if localStorage isn't available at all (e.g. private
+// browsing in some browsers, or storage disabled) so data-loss isn't silent.
+(function checkStorageAvailable() {
+  try {
+    const testKey = '__storage_test__';
+    localStorage.setItem(testKey, '1');
+    localStorage.removeItem(testKey);
+  } catch (e) {
+    document.getElementById('storageWarning').innerHTML =
+      '<div class="storage-warning">Your browser is blocking local storage (private/incognito mode or storage disabled), so progress won\'t be saved between visits.</div>';
+  }
+})();
+
 // ---------- Topic catalog ----------
 const topicCatalog = [
   { group: "Java Basics", items: [
@@ -396,15 +470,15 @@ function fmt(dateStr) {
 
 async function loadAll() {
   try {
-    const r = await window.storage.get(K_RANGE, false);
+    const r = await storage.get(K_RANGE);
     range = r ? JSON.parse(r.value) : null;
   } catch (e) { range = null; }
   try {
-    const t = await window.storage.get(K_TODOS, false);
+    const t = await storage.get(K_TODOS);
     todos = t ? JSON.parse(t.value) : {};
   } catch (e) { todos = {}; }
   try {
-    const tp = await window.storage.get(K_TOPICS, false);
+    const tp = await storage.get(K_TOPICS);
     topicState = tp ? JSON.parse(tp.value) : {};
   } catch (e) { topicState = {}; }
 
@@ -418,13 +492,13 @@ async function loadAll() {
 }
 
 async function saveRange() {
-  await window.storage.set(K_RANGE, JSON.stringify(range), false);
+  await storage.set(K_RANGE, JSON.stringify(range));
 }
 async function saveTodos() {
-  await window.storage.set(K_TODOS, JSON.stringify(todos), false);
+  await storage.set(K_TODOS, JSON.stringify(todos));
 }
 async function saveTopics() {
-  await window.storage.set(K_TOPICS, JSON.stringify(topicState), false);
+  await storage.set(K_TOPICS, JSON.stringify(topicState));
 }
 
 function getDatesInRange() {
@@ -454,10 +528,18 @@ function dayStatus(dateStr) {
   return { cls: 'pending', text: 'Pending' };
 }
 
-function taskListHTML(dateStr) {
+function taskListHTML(dateStr, readOnly) {
   const list = todos[dateStr] || [];
   if (list.length === 0) {
-    return `<div class="empty-state">No to-dos yet. Add what you want to achieve.</div>`;
+    return `<div class="empty-state">${readOnly ? 'No to-dos set for this day.' : 'No to-dos yet. Add what you want to achieve.'}</div>`;
+  }
+  if (readOnly) {
+    return list.map((task) => `
+      <div class="task task-readonly">
+        <span class="status-dot ${task.done ? 'done' : ''}"></span>
+        <span class="${task.done ? 'completed' : ''}">${escapeHTML(task.text)}</span>
+      </div>
+    `).join('');
   }
   return list.map((task, idx) => `
     <label class="task">
@@ -474,7 +556,7 @@ function escapeHTML(str) {
   return div.innerHTML;
 }
 
-function dayCardHTML(dateStr, label, isToday, showAdd) {
+function dayCardHTML(dateStr, label, isToday, showAdd, readOnly) {
   const status = dayStatus(dateStr);
   const addRow = showAdd ? `
       <div class="add-row">
@@ -487,7 +569,7 @@ function dayCardHTML(dateStr, label, isToday, showAdd) {
         <div class="day-title">${label}<small>${fmt(dateStr)}</small></div>
         <span class="badge ${status.cls}">${status.text}</span>
       </div>
-      <div class="task-list">${taskListHTML(dateStr)}</div>
+      <div class="task-list">${taskListHTML(dateStr, readOnly)}</div>
       ${addRow}
     </div>
   `;
@@ -495,9 +577,14 @@ function dayCardHTML(dateStr, label, isToday, showAdd) {
 
 // Renders day cards into any container and wires up their controls.
 // scoping handlers to the container avoids cross-tab duplicate bindings.
-function renderInto(container, dates, labels, onChange) {
+// `editable` controls whether to-dos can be added/checked/removed here at all
+// (true only in the Today & Tomorrow tab); the Daily Tracker tab renders
+// read-only cards that just display each day's to-dos and achieved status.
+function renderInto(container, dates, labels, onChange, editable) {
   const t = todayStr();
-  container.innerHTML = dates.map((d, i) => dayCardHTML(d, labels[i], d === t)).join('');
+  container.innerHTML = dates.map((d, i) => dayCardHTML(d, labels[i], d === t, editable, !editable)).join('');
+
+  if (!editable) return;
 
   container.querySelectorAll('.task-check').forEach(el => {
     el.addEventListener('change', async (e) => {
@@ -548,13 +635,13 @@ function renderDaily() {
   const todayContainer = document.getElementById('today-container');
   if (dates.includes(t)) {
     const idx = dates.indexOf(t) + 1;
-    renderInto(todayContainer, [t], [`Day ${idx}`], renderDaily);
+    renderInto(todayContainer, [t], [`Day ${idx}`], renderDaily, false);
   } else {
     todayContainer.innerHTML = `<div class="empty-state">Today is outside your selected date range.</div>`;
   }
 
   const allContainer = document.getElementById('all-days-container');
-  renderInto(allContainer, dates, dates.map((d, i) => `Day ${i+1}`), renderDaily);
+  renderInto(allContainer, dates, dates.map((d, i) => `Day ${i+1}`), renderDaily, false);
 
   const achievedCount = dates.filter(d => {
     const list = todos[d] || [];
@@ -569,7 +656,7 @@ function renderQuick() {
   const t = todayStr();
   const tmr = addDays(t, 1);
   const container = document.getElementById('quick-container');
-  renderInto(container, [t, tmr], ['Today', 'Tomorrow'], renderQuick);
+  renderInto(container, [t, tmr], ['Today', 'Tomorrow'], renderQuick, true);
 }
 
 function renderTopics() {
