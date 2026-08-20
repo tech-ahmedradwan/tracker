@@ -528,12 +528,17 @@ function dayStatus(dateStr) {
   return { cls: 'pending', text: 'Pending' };
 }
 
-function taskListHTML(dateStr, readOnly) {
+// mode: 'full' (add + delete to-dos, no checkbox — used in Today & Tomorrow;
+// marking a to-do done/undone happens in Daily Tracker instead),
+// 'check' (checkbox only, no add/delete — used in Daily Tracker so you can
+// tick off progress there), 'readonly' (plain status dot, unused currently
+// but kept for flexibility).
+function taskListHTML(dateStr, mode) {
   const list = todos[dateStr] || [];
   if (list.length === 0) {
-    return `<div class="empty-state">${readOnly ? 'No to-dos set for this day.' : 'No to-dos yet. Add what you want to achieve.'}</div>`;
+    return `<div class="empty-state">${mode === 'full' ? 'No to-dos yet. Add what you want to achieve.' : 'No to-dos set for this day.'}</div>`;
   }
-  if (readOnly) {
+  if (mode === 'readonly') {
     return list.map((task) => `
       <div class="task task-readonly">
         <span class="status-dot ${task.done ? 'done' : ''}"></span>
@@ -541,11 +546,19 @@ function taskListHTML(dateStr, readOnly) {
       </div>
     `).join('');
   }
+  if (mode === 'full') {
+    return list.map((task, idx) => `
+      <div class="task task-readonly">
+        <span class="status-dot ${task.done ? 'done' : ''}"></span>
+        <span class="${task.done ? 'completed' : ''}">${escapeHTML(task.text)}</span>
+        <button class="del" data-date="${dateStr}" data-idx="${idx}" title="Remove">✕</button>
+      </div>
+    `).join('');
+  }
   return list.map((task, idx) => `
     <label class="task">
       <input type="checkbox" ${task.done ? 'checked' : ''} data-date="${dateStr}" data-idx="${idx}" class="task-check">
       <span class="${task.done ? 'completed' : ''}">${escapeHTML(task.text)}</span>
-      <button class="del" data-date="${dateStr}" data-idx="${idx}" title="Remove">✕</button>
     </label>
   `).join('');
 }
@@ -556,9 +569,9 @@ function escapeHTML(str) {
   return div.innerHTML;
 }
 
-function dayCardHTML(dateStr, label, isToday, showAdd, readOnly) {
+function dayCardHTML(dateStr, label, isToday, mode) {
   const status = dayStatus(dateStr);
-  const addRow = showAdd ? `
+  const addRow = mode === 'full' ? `
       <div class="add-row">
         <input type="text" placeholder="Add a to-do…" class="new-task-input" data-date="${dateStr}">
         <button class="primary add-task-btn" data-date="${dateStr}">Add</button>
@@ -569,7 +582,7 @@ function dayCardHTML(dateStr, label, isToday, showAdd, readOnly) {
         <div class="day-title">${label}<small>${fmt(dateStr)}</small></div>
         <span class="badge ${status.cls}">${status.text}</span>
       </div>
-      <div class="task-list">${taskListHTML(dateStr, readOnly)}</div>
+      <div class="task-list">${taskListHTML(dateStr, mode)}</div>
       ${addRow}
     </div>
   `;
@@ -577,14 +590,13 @@ function dayCardHTML(dateStr, label, isToday, showAdd, readOnly) {
 
 // Renders day cards into any container and wires up their controls.
 // scoping handlers to the container avoids cross-tab duplicate bindings.
-// `editable` controls whether to-dos can be added/checked/removed here at all
-// (true only in the Today & Tomorrow tab); the Daily Tracker tab renders
-// read-only cards that just display each day's to-dos and achieved status.
-function renderInto(container, dates, labels, onChange, editable) {
+// mode: 'full'  — Today & Tomorrow tab: add, check, and delete to-dos.
+//       'check' — Daily Tracker tab: to-dos can be ticked off (checkbox
+//                 stays put), but nothing can be added or removed there —
+//                 that stays exclusive to the Today & Tomorrow tab.
+function renderInto(container, dates, labels, onChange, mode) {
   const t = todayStr();
-  container.innerHTML = dates.map((d, i) => dayCardHTML(d, labels[i], d === t, editable, !editable)).join('');
-
-  if (!editable) return;
+  container.innerHTML = dates.map((d, i) => dayCardHTML(d, labels[i], d === t, mode)).join('');
 
   container.querySelectorAll('.task-check').forEach(el => {
     el.addEventListener('change', async (e) => {
@@ -595,6 +607,9 @@ function renderInto(container, dates, labels, onChange, editable) {
       onChange();
     });
   });
+
+  if (mode !== 'full') return;
+
   container.querySelectorAll('.del').forEach(el => {
     el.addEventListener('click', async (e) => {
       const date = e.target.dataset.date;
@@ -635,13 +650,13 @@ function renderDaily() {
   const todayContainer = document.getElementById('today-container');
   if (dates.includes(t)) {
     const idx = dates.indexOf(t) + 1;
-    renderInto(todayContainer, [t], [`Day ${idx}`], renderDaily, false);
+    renderInto(todayContainer, [t], [`Day ${idx}`], () => { renderDaily(); renderQuick(); }, 'check');
   } else {
     todayContainer.innerHTML = `<div class="empty-state">Today is outside your selected date range.</div>`;
   }
 
   const allContainer = document.getElementById('all-days-container');
-  renderInto(allContainer, dates, dates.map((d, i) => `Day ${i+1}`), renderDaily, false);
+  renderInto(allContainer, dates, dates.map((d, i) => `Day ${i+1}`), () => { renderDaily(); renderQuick(); }, 'check');
 
   const achievedCount = dates.filter(d => {
     const list = todos[d] || [];
@@ -656,7 +671,10 @@ function renderQuick() {
   const t = todayStr();
   const tmr = addDays(t, 1);
   const container = document.getElementById('quick-container');
-  renderInto(container, [t, tmr], ['Today', 'Tomorrow'], renderQuick, true);
+  // After any add/check/delete here, also refresh the Daily Tracker tab's
+  // DOM so it's already up to date — no page refresh or tab-switch delay
+  // needed for it to show the new to-dos and achieved/missed status.
+  renderInto(container, [t, tmr], ['Today', 'Tomorrow'], () => { renderQuick(); renderDaily(); }, 'full');
 }
 
 function renderTopics() {
